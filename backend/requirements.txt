@@ -1,0 +1,9 @@
+fastapi
+uvicorn[standard]
+sqlalchemy
+pydantic
+bcrypt
+python-multipart
+
+# When cloned, use this to install these libraries:
+# pip install -r requirements.txt
