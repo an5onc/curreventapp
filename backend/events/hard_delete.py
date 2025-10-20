@@ -1,26 +1,6 @@
 import os
 import sqlite3
 
-"""
-=========================================================
-HARD DELETE EVENT (permanent removal)
-=========================================================
-
-Purpose:
-- Completely deletes an event row and related child rows (RSVPs, Likes, Invites).
-- Used for permanent removal (e.g., spam events or cleanup).
-
-What Changed:
-- Manual cascade: removes rows from rsvpLog, likesLog, inviteLog, eventCategories before deleting event.
-- Authorization check: must be creator or Faculty (admin).
-- Returns True/False for whether deletion succeeded.
-
-Frontend Use:
-- Rarely exposed directly to users (destructive).
-- Typically used by Faculty admin tools for moderation.
-- Frontend should confirm user intent before calling.
-"""
-
 # -----------------------------
 # DATABASE PATH
 # -----------------------------

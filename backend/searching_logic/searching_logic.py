@@ -1,26 +1,3 @@
-"""
-=========================================================
-SEARCHING LOGIC (in-memory search over events)
-=========================================================
-
-Purpose:
-- Provides pure Python filtering functions for searching 
-  events by title, description, category, or date range.
-
-What Changed:
-- Takes a list of event dicts (as returned by read_events).
-- Uses datetime parsing for date comparisons.
-- Does not query DB directly; runs on already-fetched data.
-
-Frontend Use:
-- Can be wired to search endpoints where frontend sends 
-  filters and backend applies these helpers.
-
-Note:
-- This avoids SQL string concatenation and keeps the search 
-  logic simple/testable in Python.
-"""
-
 from datetime import datetime
 
 def search_by_title(events: list[dict], title_query: str) -> list[dict]:

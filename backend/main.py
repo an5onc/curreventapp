@@ -487,6 +487,31 @@ def search_events(
         events = searching_logic.search_by_date(events, sd, ed)
     return [_event_to_response(evt, user_id=user_id) for evt in events]
 
+# ---------------------------------------------------------------------------
+# Deletes all past-day events once per night at midnight
+# ---------------------------------------------------------------------------
+from datetime import datetime, timedelta
+import threading
+import time
+
+def delete_past_events():
+    db_path = _get_db_path()
+    while True:
+        with sqlite3.connect(db_path) as conn:
+            cur = conn.cursor()
+            cur.execute("DELETE FROM events WHERE DATE(startDateTime) < DATE('now')")
+            conn.commit()
+        # Sleep until next midnight
+        now = datetime.now()
+        tomorrow = (now + timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
+        time.sleep((tomorrow - now).total_seconds())
+
+@app.on_event("startup")
+def schedule_cleanup():
+    thread = threading.Thread(target=delete_past_events, daemon=True)
+    thread.start()
+
+
 
 # ---------------------------------------------------------------------------
 # Health check endpoint
