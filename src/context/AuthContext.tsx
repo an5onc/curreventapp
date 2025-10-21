@@ -1,13 +1,14 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 export interface User {
-  id: string;          // string for frontend
+  id: string; // string for frontend
   email: string;
   role: 'Student' | 'Faculty';
 }
 
 interface AuthContextProps {
   user: User | null;
+  initialized: boolean; // NEW
   login: (user: User) => void;
   logout: () => void;
 }
@@ -21,10 +22,14 @@ export const useAuth = (): AuthContextProps => {
 };
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(() => {
+  const [user, setUser] = useState<User | null>(null);
+  const [initialized, setInitialized] = useState(false); // NEW
+
+  useEffect(() => {
     const stored = localStorage.getItem('user');
-    return stored ? JSON.parse(stored) : null;
-  });
+    if (stored) setUser(JSON.parse(stored));
+    setInitialized(true); // auth state is now loaded
+  }, []);
 
   const login = (u: User) => {
     setUser(u);
@@ -41,5 +46,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     else localStorage.removeItem('user');
   }, [user]);
 
-  return <AuthContext.Provider value={{ user, login, logout }}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={{ user, initialized, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
 };

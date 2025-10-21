@@ -10,7 +10,8 @@ import ManageIcon from "../assets/images/ManageIcon.png";
 
 export function Navbar() {
   const { user, logout } = useAuth();
-  const linkBase = "flex items-center gap-1 px-3 py-2 text-white/90 hover:text-[#ffcc00] hover:bg-white/10 rounded-lg";
+  const linkBase =
+    "flex items-center gap-1 px-3 py-2 text-white/90 hover:text-[#ffcc00] hover:bg-white/10 rounded-lg";
   const linkActive = "bg-[#ffcc00] text-[#002855] rounded-lg";
 
   return (
@@ -63,8 +64,15 @@ export function Navbar() {
             <NavLink to="/login" className={({ isActive }) => `${linkBase} ${isActive ? linkActive : ""}`}>
               <span>Log In</span>
             </NavLink>
+
             <NavLink to="/manage" className={({ isActive }) => `${linkBase} ${isActive ? linkActive : ""}`}>
               <span>Sign Up</span>
+            </NavLink>
+
+            {/* Added Help Link for logged-out users */}
+            <NavLink to="/help" className={({ isActive }) => `${linkBase} ${isActive ? linkActive : ""}`}>
+              <img src={HelpIcon} alt="Help" className="h-4" />
+              <span>Help</span>
             </NavLink>
           </>
         )}

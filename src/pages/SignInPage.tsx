@@ -28,7 +28,6 @@ const SignInPage: React.FC = () => {
 
       const data = await res.json();
 
-      // Use backend-provided accountID as user id if present
       const user = {
         id: data.accountID.toString(),
         email: data.email,
@@ -43,32 +42,46 @@ const SignInPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#ffffff] via-[#9eb9d5] to-[#CBD6E0]/10 pt-16 pb-12">
       <div className="w-full max-w-md bg-white shadow-md rounded-lg p-6">
-        <h2 className="text-2xl font-semibold mb-4 text-center">Sign In</h2>
-        {error && <div className="text-red-600 mb-4">{error}</div>}
+        {/* Heading */}
+        <h2 className="text-2xl font-semibold mb-4 text-center text-[#001F3D]">
+          Sign In
+        </h2>
+
+        {/* Error */}
+        {error && (
+          <div className="text-red-700 bg-red-100 border border-red-300 px-3 py-2 rounded-md mb-4">
+            {error}
+          </div>
+        )}
+
+        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block mb-1 text-sm font-medium">Email</label>
+            <label className="block mb-1 text-sm font-medium text-[#1C1C1C]">Email</label>
             <input
               type="text"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-3 py-2 border rounded-md"
+              className="w-full px-3 py-2 border border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-[#001F3D] focus:border-[#001F3D]"
             />
           </div>
           <div>
-            <label className="block mb-1 text-sm font-medium">Password</label>
+            <label className="block mb-1 text-sm font-medium text-[#1C1C1C]">Password</label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full px-3 py-2 border rounded-md"
+              className="w-full px-3 py-2 border border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-[#001F3D] focus:border-[#001F3D]"
             />
           </div>
-          <button type="submit" className="w-full py-2 bg-blue-500 text-white rounded-md">
+          <button
+            type="submit"
+            className="w-full py-2 bg-[#001F3D] text-white rounded-md font-semibold hover:bg-[#003366] focus:outline-none focus:ring-2 focus:ring-[#001F3D] focus:ring-offset-1"
+          >
             Login
           </button>
         </form>

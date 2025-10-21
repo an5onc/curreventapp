@@ -7,7 +7,13 @@ const URL_PATTERN = /(https?:\/\/[^\s]+)/g;
 function linkify(text: string): React.ReactNode[] {
   return text.split(URL_PATTERN).map((part, i) =>
     part.startsWith('http://') || part.startsWith('https://') ? (
-      <a key={i} href={part} target="_blank" rel="noopener noreferrer" className="text-indigo-600 underline break-all">
+      <a
+        key={i}
+        href={part}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-indigo-600 underline break-all"
+      >
         {part}
       </a>
     ) : part
@@ -20,20 +26,21 @@ const EventDetailPage: React.FC = () => {
   const { events, toggleLike, toggleRsvp, deleteEvent } = useEvents();
   const { user } = useAuth();
 
-  // Ensure ID comparison works for both string and numeric IDs
   const event = events.find((e) => String(e.id) === String(id));
 
-  // Derive pricing flag for typing compatibility
   const isPriced =
     (event as any)?.isPriced ??
     ((event as any)?.price !== undefined && (event as any)?.price !== null && Number((event as any)?.price) > 0);
 
   if (!event) return <p className="text-center mt-8">Event not found.</p>;
 
-  // Allow only creator to edit/delete
-  const canEditOrDelete = user && Number(user.id) === Number(event.creatorID);
+  // Permission logic
+  const isCreator = user && Number(user.id) === Number(event.creatorID);
+  const isAppAdmin = user?.email === 'appadmin@unco.edu';
+  const canEditOrDelete = isCreator || isAppAdmin;
 
   const handleDelete = async () => {
+    if (!canEditOrDelete) return;
     if (!confirm('Are you sure you want to delete this event?')) return;
     await deleteEvent(event.id);
     navigate('/home'); // redirect to home after deletion
@@ -44,12 +51,14 @@ const EventDetailPage: React.FC = () => {
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-6">
-      {event.imageUrl && (
+      {event.imageUrl ? (
         <div className="relative mb-6">
           <img
             src={event.imageUrl}
             alt={event.title || 'Event image'}
-            onError={(e) => (e.currentTarget.style.display = 'none')}
+            onError={(e) => {
+              e.currentTarget.style.display = 'none';
+            }}
             className="w-full h-64 object-cover rounded-lg shadow bg-gray-200"
           />
           <div className="absolute inset-0 bg-black bg-opacity-40 flex flex-col justify-end p-6 rounded-lg">
@@ -62,12 +71,13 @@ const EventDetailPage: React.FC = () => {
             </p>
           </div>
         </div>
-      )}
-
-      {!event.imageUrl && (
-        <div className="bg-brand-blue text-white p-6 rounded-lg mb-6 flex flex-col justify-center items-center" style={{ minHeight: '16rem' }}>
-          <h1 className="text-3xl font-bold">{event.title}</h1>
-          <p className="text-sm mt-2">
+      ) : (
+        <div
+          className="bg-white p-6 rounded-lg mb-6 flex flex-col justify-center items-center"
+          style={{ minHeight: '16rem' }}
+        >
+          <h1 className="text-3xl font-bold text-black">{event.title}</h1>
+          <p className="text-sm mt-2 text-gray-700">
             {new Date(event.startDate).toLocaleString(undefined, {
               dateStyle: 'medium',
               timeStyle: 'short',
@@ -77,10 +87,20 @@ const EventDetailPage: React.FC = () => {
       )}
 
       <div className="bg-white p-6 rounded-lg shadow space-y-4">
+        <h1 className="text-3xl font-bold text-brand-bluegrey">{event.title}</h1>
         <p className="whitespace-pre-line text-brand-bluegrey">{linkify(event.description)}</p>
-        <p><strong className="text-brand-gold">Categories:</strong> {Array.isArray(event.categories) ? event.categories.join(', ') : event.category}</p>
-        {isPriced && <p><strong className="text-brand-gold">Price:</strong> ${Number(event.price).toFixed(2)}</p>}
-        <p><strong className="text-brand-gold">RSVP:</strong> {event.rsvpRequired ? 'Required' : 'Not Required'}</p>
+        <p>
+          <strong className="text-brand-gold">Categories:</strong>{' '}
+          {Array.isArray(event.categories) ? event.categories.join(', ') : event.category}
+        </p>
+        {isPriced && (
+          <p>
+            <strong className="text-brand-gold">Price:</strong> ${Number(event.price).toFixed(2)}
+          </p>
+        )}
+        <p>
+          <strong className="text-brand-gold">RSVP:</strong> {event.rsvpRequired ? 'Required' : 'Not Required'}
+        </p>
       </div>
 
       <div className="flex flex-wrap gap-2 mt-4">
@@ -115,7 +135,7 @@ const EventDetailPage: React.FC = () => {
         <div className="flex flex-wrap gap-2 mt-4">
           <button
             onClick={() => navigate(`/events/${event.id}/edit`)}
-            className="px-3 py-1 rounded-full border bg-brand-butter text-brand-blue hover:bg-brand-gold"
+            className="px-3 py-1 rounded-full border bg-green-100 text-green-600 border-green-200 hover:bg-brand-gold"
           >
             Edit
           </button>

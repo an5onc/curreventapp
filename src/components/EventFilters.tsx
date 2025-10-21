@@ -76,7 +76,6 @@ const EventFilters: React.FC<EventFiltersProps> = ({ categories, value, onChange
         onChange={(e) => set('sort', e.target.value as SortKey)}
       >
         <option value="soon">Starting Soon</option>
-        <option value="new">Newest</option>
         <option value="popular">Most Liked</option>
       </select>
     </div>
